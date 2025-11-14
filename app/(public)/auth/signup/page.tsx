@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function SignupPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -21,6 +22,17 @@ export default function LoginPage() {
     setSuccess(false);
 
     try {
+      // Store name in cookie for later use during verification
+      if (name) {
+        await fetch("/api/auth/signup-name", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+      }
+
+      // For passwordless auth, signup and login use the same flow
+      // NextAuth will create the user automatically if they don't exist
       const result = await signIn("email", {
         email,
         redirect: false,
@@ -45,13 +57,24 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
+          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
           <CardDescription>
-            Enter your email address and we'll send you a magic link to sign in.
+            Enter your information and we'll send you a magic link to sign up.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name (optional)</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -71,16 +94,16 @@ export default function LoginPage() {
             )}
             {success && (
               <div className="rounded-md bg-green-500/10 p-3 text-sm text-green-600 dark:text-green-400">
-                Check your email for a sign-in link!
+                Check your email for a sign-up link!
               </div>
             )}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Sending..." : "Send magic link"}
             </Button>
             <div className="text-center text-sm text-muted-foreground">
-              Don't have an account?{" "}
-              <Link href="/auth/signup" className="text-primary hover:underline">
-                Sign up
+              Already have an account?{" "}
+              <Link href="/auth/login" className="text-primary hover:underline">
+                Sign in
               </Link>
             </div>
           </form>
@@ -89,3 +112,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

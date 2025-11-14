@@ -23,16 +23,18 @@ export default async function Home() {
           <CardContent className="space-y-4">
             {user ? (
               <div className="space-y-2">
-                <p className="text-sm font-medium">You are signed in!</p>
+                <p className="text-sm font-medium">
+                  {user.name ? `Welcome back, ${user.name}!` : "You are signed in!"}
+                </p>
                 <div className="rounded-md bg-muted p-4 space-y-2">
-                  <p className="text-sm">
-                    <span className="font-medium">Email:</span> {user.email}
-                  </p>
                   {user.name && (
                     <p className="text-sm">
                       <span className="font-medium">Name:</span> {user.name}
                     </p>
                   )}
+                  <p className="text-sm">
+                    <span className="font-medium">Email:</span> {user.email}
+                  </p>
                 </div>
               </div>
             ) : (

@@ -42,7 +42,7 @@ export default function LoginPage() {
       const result = await signIn("email", {
         email,
         redirect: false,
-        callbackUrl: "/",
+        callbackUrl: "/dashboard",
       });
 
       if (result?.error) {

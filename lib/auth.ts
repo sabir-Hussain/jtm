@@ -28,10 +28,11 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        
+
         // Check for signup name cookie and update user if they don't have a name
         if (user.email && !user.name) {
-          const { getAndClearSignupName, updateUserWithSignupName } = await import("./signup-helper");
+          const { getAndClearSignupName, updateUserWithSignupName } =
+            await import("./signup-helper");
           const name = await getAndClearSignupName();
           if (name) {
             await updateUserWithSignupName(user.email, name);
@@ -53,7 +54,26 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // If redirecting to dashboard or root, go to dashboard
+      if (
+        url === baseUrl ||
+        url === `${baseUrl}/` ||
+        url === `${baseUrl}/dashboard`
+      ) {
+        return `${baseUrl}/dashboard`;
+      }
+      // Allow relative URLs
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`;
+      }
+      // Allow same origin URLs
+      if (new URL(url).origin === baseUrl) {
+        return url;
+      }
+      // Default to dashboard
+      return `${baseUrl}/dashboard`;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
-

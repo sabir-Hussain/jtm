@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -44,7 +50,9 @@ export default function SignupPage() {
       } else {
         setSuccess(true);
         // Redirect to verify page with email parameter
-        window.location.href = `/auth/verify?email=${encodeURIComponent(email)}`;
+        window.location.href = `/auth/verify?email=${encodeURIComponent(
+          email
+        )}`;
       }
     } catch (err) {
       setError("Something went wrong. Please try again.");
@@ -57,7 +65,9 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            Create an account
+          </CardTitle>
           <CardDescription>
             Enter your information and we'll send you a magic link to sign up.
           </CardDescription>
@@ -112,4 +122,3 @@ export default function SignupPage() {
     </div>
   );
 }
-

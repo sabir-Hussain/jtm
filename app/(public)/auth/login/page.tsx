@@ -21,6 +21,24 @@ export default function LoginPage() {
     setSuccess(false);
 
     try {
+      // First, check if email exists in the system
+      const checkResponse = await fetch("/api/auth/check-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const checkData = await checkResponse.json();
+
+      if (!checkData.exists) {
+        setError(
+          "This email is not registered. Please sign up first to create an account."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // Email exists, proceed with sending magic link
       const result = await signIn("email", {
         email,
         redirect: false,
@@ -65,8 +83,18 @@ export default function LoginPage() {
               />
             </div>
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                {error}
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive space-y-2">
+                <p>{error}</p>
+                {error.includes("not registered") && (
+                  <p>
+                    <Link
+                      href="/auth/signup"
+                      className="font-medium underline hover:no-underline"
+                    >
+                      Sign up here
+                    </Link>
+                  </p>
+                )}
               </div>
             )}
             {success && (
